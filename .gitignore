@@ -1,0 +1,29 @@
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Editors
+.idea/
+.vscode/
+
+# Build output
+build/
+dist/
+.pio/
+
+# Temporary files
+*.log
+*.tmp
+*.bak
