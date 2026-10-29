@@ -1,0 +1,43 @@
+SKYDOCK BULLSEYE BACKUP - BENCH TEST
+
+This test does not use the machine-learning model. The webcam looks for the large bullseye on the pad and the small 50 mm bullseye on the drone. It shows their offset, Nano distance reading, and all 10 switch states. The Nano OLED shows the camera's human-pilot direction. Nothing controls the drone.
+
+FILES
+- skydock_drone_bullseye_50mm.pdf: small printable target for the drone.
+- bullseye_test.py: webcam, marker, sensor, and switch test on the Mac or Windows laptop.
+- firmware/skydock_nano_bullseye_test.ino: Nano firmware for the ultrasonic sensor, 10 switches, and OLED.
+
+PRINT THE SMALL DRONE TARGET
+1. Print skydock_drone_bullseye_50mm.pdf at Actual Size / 100%. Turn off Fit to Page.
+2. Measure the marked check line. It must be exactly 50 mm.
+3. Cut carefully around the 50 mm outside circle. Use lightweight paper and keep it flat. Do not fly with a loose paper marker; wait until the drone arrives and attach it fully flat at the center top, clear of every propeller and moving part.
+
+WIRE THE NANO FOR A BENCH TEST
+Disconnect USB power while wiring. This sketch uses Nano V3/R3 pin names:
+- OLED: SDA to A4, SCL to A5, GND to GND. Connect VCC only to a voltage accepted by your OLED module. The sketch defaults to SH1106; change the display class in the firmware to U8X8_SSD1306_128X64_NONAME_HW_I2C if the screen's chip is SSD1306.
+- HC-SR04: VCC to 5V, GND to GND, TRIG to A0, ECHO to A1. The Nano is a 5 V board, so its input can read the HC-SR04 Echo signal.
+- Microswitches: for each switch, connect COM to GND and NO to one Nano pin. Leave NC unused. The ten pins are D2, D3, D4, D5, D6, D7, D8, D9, D10, and D11. Do not connect the switch to 5V; the Nano uses its built-in pull-up.
+- All parts must share GND. Do not connect the drone battery to the Nano or sensor circuit.
+
+UPLOAD AND START
+1. In Arduino IDE, install the U8g2 library by oliver.
+2. Open firmware/skydock_nano_bullseye_test.ino. Select Board: Arduino Nano and the port for the CH340. Upload. If upload fails, choose Tools > Processor > ATmega328P (Old Bootloader) and upload again.
+3. Close Arduino Serial Monitor; the laptop program needs the USB serial port.
+4. Install OpenCV and pyserial into the same Python you use to run the file:
+   Mac:     python3 -m pip install opencv-python pyserial
+   Windows: py -m pip install opencv-python pyserial
+5. From the project folder, start the program:
+   Mac:     python3 bullseye_test.py --port /dev/cu.wchusbserialXXXX
+   Windows: py bullseye_test.py --port COM5
+   Replace the example port with the Nano's actual port. Add --camera 1 if camera 0 is not the webcam you want. Press Q in the preview to quit.
+
+TEST BEFORE THE DRONE ARRIVES
+1. Put the large 300 mm pad bullseye flat on the board, with its two sensor holes aligned over the HC-SR04 transducers.
+2. Aim the camera straight down and keep both the full large target and the whole board in view. The preview should say PAD FOUND.
+3. Hold the small 50 mm target flat on a book or piece of cardboard above the pad. Move it to the center and then to each side. The preview should find the small target and show direction/estimated offset. The OLED should show the same direction.
+4. The number is an estimate: the drone marker sits above the board, so it is at a different camera distance from the pad marker. Check directions first; verify distance against known offsets before relying on millimeters.
+5. Test the ultrasonic sensor with a flat object in front of its transducers. It should show a distance in cm. If it says NO ECHO, check VCC, GND, A0, A1, and sensor orientation.
+6. Press each switch by hand. The preview lists pressed pin numbers and shows 0/1 for each of D2-D11. A pressed switch is 1.
+7. Propellers must be removed for all bench tests. Do not arm or fly the drone while the marker is loose or the frame/wiring is being tested.
+
+If the marker is not found, improve even lighting, keep the paper flat, check that the full circles are visible, and move the small target closer to the camera for a first test. The program deliberately displays HOLD if either bullseye is missing.
